@@ -3062,7 +3062,226 @@
         }
 
     </style>
+<style>
 
+.install-app-banner {
+
+    position: fixed;
+
+    left: 14px;
+    right: 14px;
+    bottom: 18px;
+
+    z-index: 99999;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f4f9ff
+        );
+
+    border:
+        1px solid
+        rgba(33,150,243,.18);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(0,0,0,.18);
+
+    padding: 14px;
+
+    direction: rtl;
+
+    animation:
+        installBannerIn
+        .45s
+        ease;
+
+}
+
+.install-app-banner[hidden] {
+    display: none;
+}
+
+.install-app-content {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+.install-app-icon {
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2196f3,
+            #1565c0
+        );
+
+    color: white;
+
+    font-size: 24px;
+
+    box-shadow:
+        0 7px 20px
+        rgba(33,150,243,.35);
+
+}
+
+.install-app-text {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+.install-app-text strong {
+
+    display: block;
+
+    color: #16213e;
+
+    font-size: .9rem;
+
+    font-weight: 900;
+
+}
+
+.install-app-text span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #6d7585;
+
+    font-size: .68rem;
+
+    line-height: 1.5;
+
+}
+
+#installAppBtn {
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding:
+        11px
+        14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2196f3,
+            #1565c0
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-weight: 900;
+
+    font-size: .72rem;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px
+        rgba(33,150,243,.3);
+
+}
+
+#closeInstallAppBtn {
+
+    width: 28px;
+    height: 28px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #eef2f7;
+
+    color: #6c7480;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+@keyframes installBannerIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(30px)
+            scale(.96);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .install-app-content {
+
+        align-items: flex-start;
+
+    }
+
+    #installAppBtn {
+
+        padding:
+            10px
+            11px;
+
+        font-size: .65rem;
+
+    }
+
+}
+
+</style>
 </head>
 
 <body>
@@ -10448,5 +10667,153 @@ if ("serviceWorker" in navigator) {
 }
 
 </script>
+    <div
+    id="installAppBanner"
+    class="install-app-banner"
+    hidden
+>
+
+    <div class="install-app-content">
+
+        <div class="install-app-icon">
+            📱
+        </div>
+
+        <div class="install-app-text">
+
+            <strong>
+                ثبّت متجر سدرة
+            </strong>
+
+            <span>
+                ثبّت المتجر على جهازك للوصول إليه بسرعة في أي وقت.
+            </span>
+
+        </div>
+
+        <button
+            id="installAppBtn"
+            type="button"
+        >
+            تثبيت التطبيق
+        </button>
+
+        <button
+            id="closeInstallAppBtn"
+            type="button"
+            aria-label="إغلاق"
+        >
+            ×
+        </button>
+
+    </div>
+
+    </div>
+    <script>
+(function () {
+
+    let deferredInstallPrompt = null;
+
+    const installBanner = document.getElementById("installAppBanner");
+    const installButton = document.getElementById("installAppBtn");
+    const closeButton = document.getElementById("closeInstallAppBtn");
+
+    if (!installBanner || !installButton || !closeButton) {
+        console.warn("⚠️ عناصر تثبيت التطبيق غير موجودة.");
+        return;
+    }
+
+    /*
+     * استقبال طلب تثبيت التطبيق من المتصفح
+     */
+    window.addEventListener("beforeinstallprompt", function (event) {
+
+        event.preventDefault();
+
+        deferredInstallPrompt = event;
+
+        /*
+         * إظهار رسالة التثبيت
+         */
+        installBanner.hidden = false;
+
+    });
+
+
+    /*
+     * عند الضغط على زر تثبيت التطبيق
+     */
+    installButton.addEventListener("click", async function () {
+
+        if (!deferredInstallPrompt) {
+
+            alert(
+                "يمكنك تثبيت المتجر من قائمة المتصفح ثم اختيار «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»."
+            );
+
+            return;
+        }
+
+        deferredInstallPrompt.prompt();
+
+        const result = await deferredInstallPrompt.userChoice;
+
+        console.log(
+            "نتيجة تثبيت التطبيق:",
+            result.outcome
+        );
+
+        deferredInstallPrompt = null;
+
+        installBanner.hidden = true;
+
+    });
+
+
+    /*
+     * إغلاق رسالة التثبيت
+     */
+    closeButton.addEventListener("click", function () {
+
+        installBanner.hidden = true;
+
+        /*
+         * عدم إزعاج المستخدم مرة أخرى خلال هذه الجلسة
+         */
+        sessionStorage.setItem(
+            "installBannerClosed",
+            "true"
+        );
+
+    });
+
+
+    /*
+     * إذا كان المستخدم أغلق الرسالة سابقًا
+     */
+    if (
+        sessionStorage.getItem("installBannerClosed") === "true"
+    ) {
+
+        installBanner.hidden = true;
+
+    }
+
+
+    /*
+     * عندما يتم تثبيت التطبيق فعليًا
+     */
+    window.addEventListener("appinstalled", function () {
+
+        console.log("✅ تم تثبيت متجر سدرة.");
+
+        deferredInstallPrompt = null;
+
+        installBanner.hidden = true;
+
+    });
+
+})();
+    </script>
 </body>
 </html>

@@ -719,15 +719,22 @@
             background: #f3f6f4;
         }
 
-        .product-card h4 {
-            padding: 10px 10px 3px;
-
-            font-size: .78rem;
-
-            line-height: 1.5;
-
-            min-height: 40px;
-        }
+        /* التأكد من ظهور عنوان المنتج في البطاقة */
+.product-card h4 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    color: #17251f !important;
+    padding: 10px 10px 3px !important;
+    line-height: 1.5 !important;
+    min-height: 40px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
 
         .product-card .price-area {
             padding: 5px 10px 12px;
